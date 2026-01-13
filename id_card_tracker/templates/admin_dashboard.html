@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - LASU ID Card Tracker{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-1">
+                <i class="bi bi-dashboard text-primary me-2"></i>
+                Admin Dashboard
+            </h1>
+            <p class="text-muted mb-0">Manage ID card status for all students</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin_upload') }}" class="btn btn-success">
+                <i class="bi bi-upload me-2"></i>
+                Upload Data
+            </a>
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger">
+                <i class="bi bi-box-arrow-right me-2"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ students|length }}</h4>
+                            <p class="mb-0">Total Students</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-people" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ students|selectattr('status', 'equalto', 'Not Yet Printed')|list|length }}</h4>
+                            <p class="mb-0">Not Yet Printed</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-clock" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ students|selectattr('status', 'equalto', 'Printing in Progress')|list|length }}</h4>
+                            <p class="mb-0">Printing in Progress</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-gear" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1">{{ students|selectattr('status', 'equalto', 'Ready for Pickup')|list|length }}</h4>
+                            <p class="mb-0">Ready for Pickup</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search by name or matric number...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="Not Yet Printed">Not Yet Printed</option>
+                        <option value="Printing in Progress">Printing in Progress</option>
+                        <option value="Ready for Pickup">Ready for Pickup</option>
+                        <option value="Collected">Collected</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="departmentFilter">
+                        <option value="">All Departments</option>
+                        {% set departments = students|map(attribute='department')|unique|list %}
+                        {% for dept in departments|sort %}
+                            <option value="{{ dept }}">{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Students Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-table me-2"></i>
+                Student Records
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="studentsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Matric Number</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr data-name="{{ student.name|lower }}" data-matric="{{ student.matric_number|lower }}" data-department="{{ student.department }}" data-status="{{ student.status }}">
+                            <td>
+                                <strong>{{ student.matric_number }}</strong>
+                            </td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.department }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if student.status == 'Not Yet Printed' %}bg-secondary
+                                    {% elif student.status == 'Printing in Progress' %}bg-info
+                                    {% elif student.status == 'Ready for Pickup' %}bg-success
+                                    {% elif student.status == 'Collected' %}bg-primary
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ student.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">
+                                    {{ student.date_updated.strftime('%b %d, %Y %H:%M') if student.date_updated else 'N/A' }}
+                                </small>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-select" 
+                                        data-student-id="{{ student.id }}" 
+                                        style="width: auto; min-width: 150px;">
+                                    <option value="Not Yet Printed" {% if student.status == 'Not Yet Printed' %}selected{% endif %}>
+                                        Not Yet Printed
+                                    </option>
+                                    <option value="Printing in Progress" {% if student.status == 'Printing in Progress' %}selected{% endif %}>
+                                        Printing in Progress
+                                    </option>
+                                    <option value="Ready for Pickup" {% if student.status == 'Ready for Pickup' %}selected{% endif %}>
+                                        Ready for Pickup
+                                    </option>
+                                    <option value="Collected" {% if student.status == 'Collected' %}selected{% endif %}>
+                                        Collected
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- No Results Message -->
+            <div id="noResults" class="text-center py-5" style="display: none;">
+                <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                <h5 class="text-muted mt-3">No students found</h5>
+                <p class="text-muted">Try adjusting your search criteria or filters.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Update Success Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="statusUpdateToast" class="toast" role="alert">
+        <div class="toast-header bg-success text-white">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            Student status updated successfully!
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Search and filter functionality
+function filterStudents() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    
+    const rows = document.querySelectorAll('#studentsTable tbody tr');
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        const name = row.dataset.name;
+        const matric = row.dataset.matric;
+        const department = row.dataset.department;
+        const status = row.dataset.status;
+        
+        const matchesSearch = name.includes(searchTerm) || matric.includes(searchTerm);
+        const matchesStatus = !statusFilter || status === statusFilter;
+        const matchesDepartment = !departmentFilter || department === departmentFilter;
+        
+        if (matchesSearch && matchesStatus && matchesDepartment) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Show/hide no results message
+    const noResults = document.getElementById('noResults');
+    if (visibleCount === 0) {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+}
+
+// Clear all filters
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('departmentFilter').value = '';
+    filterStudents();
+}
+
+// Status update functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for search and filter
+    document.getElementById('searchInput').addEventListener('input', filterStudents);
+    document.getElementById('statusFilter').addEventListener('change', filterStudents);
+    document.getElementById('departmentFilter').addEventListener('change', filterStudents);
+    
+    // Add event listeners for status changes
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const studentId = this.dataset.studentId;
+            const newStatus = this.value;
+            
+            // Update status via AJAX
+            fetch('{{ url_for("update_status") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    student_id: studentId,
+                    status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the row's data attribute
+                    const row = this.closest('tr');
+                    row.dataset.status = newStatus;
+                    
+                    // Update the status badge
+                    const statusCell = row.querySelector('td:nth-child(4) .badge');
+                    statusCell.textContent = newStatus;
+                    statusCell.className = 'badge ' + getStatusClass(newStatus);
+                    
+                    // Show success toast
+                    const toast = new bootstrap.Toast(document.getElementById('statusUpdateToast'));
+                    toast.show();
+                    
+                    // Update statistics (you might want to refresh the page or update dynamically)
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    alert('Error updating status: ' + data.message);
+                    // Reset the select to previous value
+                    this.value = this.dataset.previousValue || this.value;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating status. Please try again.');
+                // Reset the select to previous value
+                this.value = this.dataset.previousValue || this.value;
+            });
+        });
+        
+        // Store previous value for rollback
+        select.addEventListener('focus', function() {
+            this.dataset.previousValue = this.value;
+        });
+    });
+});
+
+// Get status badge class
+function getStatusClass(status) {
+    switch(status) {
+        case 'Not Yet Printed': return 'bg-secondary';
+        case 'Printing in Progress': return 'bg-info';
+        case 'Ready for Pickup': return 'bg-success';
+        case 'Collected': return 'bg-primary';
+        default: return 'bg-secondary';
+    }
+}
+</script>
+{% endblock %} 

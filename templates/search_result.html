@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Status Result - {{ student.name }} - University of Ibadan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <!-- Back Button -->
+            <div class="mb-4">
+                <a href="{{ url_for('search') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    Back to Search
+                </a>
+            </div>
+            
+            <!-- Student Information Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>
+                        Student Information
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Matriculation Number:</label>
+                            <p class="h5 mb-0">{{ student.matric_number }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Full Name:</label>
+                            <p class="h5 mb-0">{{ student.name }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Department:</label>
+                            <p class="h5 mb-0">{{ student.department }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-muted">Last Updated:</label>
+                            <p class="h5 mb-0">{{ student.date_updated.strftime('%B %d, %Y') if student.date_updated else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-card-text me-2"></i>
+                        ID Card Status
+                    </h4>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3">
+                        {% if student.status == 'Not Yet Printed' %}
+                            <span class="badge bg-secondary status-badge" style="font-size: 1.2rem;">
+                                <i class="bi bi-clock me-2"></i>
+                                {{ student.status }}
+                            </span>
+                        {% elif student.status == 'Printing in Progress' %}
+                            <span class="badge bg-info status-badge" style="font-size: 1.2rem;">
+                                <i class="bi bi-gear me-2"></i>
+                                {{ student.status }}
+                            </span>
+                        {% elif student.status == 'Ready for Pickup' %}
+                            <span class="badge bg-success status-badge" style="font-size: 1.2rem;">
+                                <i class="bi bi-check-circle me-2"></i>
+                                {{ student.status }}
+                            </span>
+                        {% elif student.status == 'Collected' %}
+                            <span class="badge bg-primary status-badge" style="font-size: 1.2rem;">
+                                <i class="bi bi-person-check me-2"></i>
+                                {{ student.status }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary status-badge" style="font-size: 1.2rem;">
+                                <i class="bi bi-question-circle me-2"></i>
+                                {{ student.status }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Status-specific messages -->
+                    {% if student.status == 'Not Yet Printed' %}
+                        <p class="text-muted mb-0">
+                            Your ID card has not been processed yet. Please check back later for updates.
+                        </p>
+                    {% elif student.status == 'Printing in Progress' %}
+                        <p class="text-muted mb-0">
+                            Your ID card is currently being processed. Please check back in a few days.
+                        </p>
+                    {% elif student.status == 'Ready for Pickup' %}
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Great News!
+                            </h5>
+                            <p class="mb-0">
+                                Your ID card is ready for collection! Please visit the ITEMS office during office hours 
+                                (8:00 AM - 4:00 PM) to collect your card. Don't forget to bring a valid form of identification.
+                            </p>
+                        </div>
+                    {% elif student.status == 'Collected' %}
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="bi bi-person-check me-2"></i>
+                                Already Collected
+                            </h5>
+                            <p class="mb-0">
+                                Your ID card has been successfully collected. If you have any issues or need a replacement, 
+                                please contact the ITEMS office.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Instructions Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        What to do next?
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if student.status == 'Ready for Pickup' %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6><i class="bi bi-geo-alt text-primary me-2"></i>Location</h6>
+                                <p class="text-muted mb-0">ITEMS Office, University of Ibadan</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6><i class="bi bi-clock text-primary me-2"></i>Office Hours</h6>
+                                <p class="text-muted mb-0">Monday - Friday: 8:00 AM - 4:00 PM</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6><i class="bi bi-card-text text-primary me-2"></i>Required Documents</h6>
+                                <p class="text-muted mb-0">Valid form of identification</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6><i class="bi bi-person text-primary me-2"></i>Collection Process</h6>
+                                <p class="text-muted mb-0">Present your matric number and ID</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">
+                            Please check back later for status updates. The system is updated regularly by ITEMS staff.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('search') }}" class="btn btn-primary me-2">
+                    <i class="bi bi-search me-2"></i>
+                    Check Another Student
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house me-2"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

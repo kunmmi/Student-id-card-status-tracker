@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Home - University of Ibadan ID Card Tracker{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="bi bi-card-text me-3"></i>
+                    ID Card Collection Status Tracker
+                </h1>
+                <p class="lead mb-4">
+                    Check the status of your University of Ibadan ID card. 
+                    Enter your matric number to see if your card is ready for collection.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <a href="{{ url_for('search') }}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-search me-2"></i>
+                        Check My Status
+                    </a>
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-person-circle me-2"></i>
+                        Staff Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="h3 mb-3">How It Works</h2>
+                <p class="text-muted">Simple steps to check your ID card status</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="bi bi-search text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">1. Enter Matric Number</h5>
+                        <p class="card-text text-muted">
+                            Input your matriculation number in the search form
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="bi bi-info-circle text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">2. View Status</h5>
+                        <p class="card-text text-muted">
+                            See your current ID card status and department information
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="bi bi-check-circle text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">3. Collect When Ready</h5>
+                        <p class="card-text text-muted">
+                            Visit the ITEMS office when your status shows "Ready for Pickup"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Status Types Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="h3 mb-3">ID Card Status Types</h2>
+                <p class="text-muted">Understanding what each status means</p>
+            </div>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-md-3 col-sm-6">
+                <div class="d-flex align-items-center p-3 bg-white rounded shadow-sm">
+                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-clock text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">Not Yet Printed</h6>
+                        <small class="text-muted">Processing not started</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-sm-6">
+                <div class="d-flex align-items-center p-3 bg-white rounded shadow-sm">
+                    <div class="bg-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-gear text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">Printing in Progress</h6>
+                        <small class="text-muted">Currently being processed</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-sm-6">
+                <div class="d-flex align-items-center p-3 bg-white rounded shadow-sm">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-check-circle text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">Ready for Pickup</h6>
+                        <small class="text-muted">Available at ITEMS office</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-sm-6">
+                <div class="d-flex align-items-center p-3 bg-white rounded shadow-sm">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-person-check text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">Collected</h6>
+                        <small class="text-muted">Successfully received</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="h3 mb-4">Need Help?</h2>
+                <p class="text-muted mb-4">
+                    If you have any questions about your ID card status or encounter any issues, 
+                    please contact the ITEMS office directly.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-geo-alt text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h6>ITEMS Office</h6>
+                                <p class="text-muted small mb-0">University of Ibadan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-clock text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h6>Office Hours</h6>
+                                <p class="text-muted small mb-0">8:00 AM - 4:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

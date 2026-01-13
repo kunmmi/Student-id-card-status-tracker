@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Student Data - LASU ID Card Tracker{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="h2 mb-3">
+                    <i class="bi bi-upload text-primary me-2"></i>
+                    Upload Student Data
+                </h1>
+                <p class="text-muted">
+                    Upload Excel or CSV files containing student information to update the database
+                </p>
+            </div>
+            
+            <!-- Upload Form -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-arrow-up me-2"></i>
+                        File Upload
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin_upload') }}" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="file" class="form-label fw-semibold">
+                                <i class="bi bi-file-earmark me-2"></i>
+                                Select File
+                            </label>
+                            <input 
+                                type="file" 
+                                class="form-control form-control-lg" 
+                                id="file" 
+                                name="file" 
+                                accept=".csv,.xlsx,.xls"
+                                required
+                            >
+                            <div class="form-text">
+                                Supported formats: CSV, Excel (.xlsx, .xls). Maximum file size: 10MB
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-upload me-2"></i>
+                                Upload and Process
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- File Format Requirements -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        File Format Requirements
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6><i class="bi bi-list-check text-primary me-2"></i>Required Columns:</h6>
+                            <ul class="list-unstyled">
+                                <li><code>matric_number</code> - Student matriculation number</li>
+                                <li><code>name</code> - Full name of student</li>
+                                <li><code>department</code> - Student's department</li>
+                                <li><code>status</code> - ID card status</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6><i class="bi bi-check-circle text-primary me-2"></i>Status Values:</h6>
+                            <ul class="list-unstyled">
+                                <li><code>Not Yet Printed</code></li>
+                                <li><code>Printing in Progress</code></li>
+                                <li><code>Ready for Pickup</code></li>
+                                <li><code>Collected</code></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <h6 class="alert-heading">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Important Notes:
+                        </h6>
+                        <ul class="mb-0">
+                            <li>Matric numbers must be unique</li>
+                            <li>Existing students will be updated with new information</li>
+                            <li>New students will be added to the database</li>
+                            <li>All data will be validated before processing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sample File Download -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-download me-2"></i>
+                        Sample Files
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-3">
+                        Download sample files to see the correct format for your data:
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-outline-primary w-100" onclick="downloadSampleCSV()">
+                                <i class="bi bi-file-earmark-text me-2"></i>
+                                Download Sample CSV
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-outline-primary w-100" onclick="downloadSampleExcel()">
+                                <i class="bi bi-file-earmark-excel me-2"></i>
+                                Download Sample Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload Instructions -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-question-circle me-2"></i>
+                        How to Prepare Your File
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px;">
+                                    <i class="bi bi-1-circle text-primary" style="font-size: 2rem;"></i>
+                                </div>
+                                <h6>1. Prepare Data</h6>
+                                <p class="small text-muted">
+                                    Ensure your Excel/CSV has the required columns with proper data
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px;">
+                                    <i class="bi bi-2-circle text-primary" style="font-size: 2rem;"></i>
+                                </div>
+                                <h6>2. Upload File</h6>
+                                <p class="small text-muted">
+                                    Select your file and click upload to process the data
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 60px; height: 60px;">
+                                    <i class="bi bi-3-circle text-primary" style="font-size: 2rem;"></i>
+                                </div>
+                                <h6>3. Review Results</h6>
+                                <p class="small text-muted">
+                                    Check the dashboard to see updated student information
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-house me-2"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sample file generation -->
+<script>
+function downloadSampleCSV() {
+    const csvContent = `matric_number,name,department,status
+123456,John Doe,Computer Science,Not Yet Printed
+123457,Jane Smith,Mathematics,Printing in Progress
+123458,Mike Johnson,Physics,Ready for Pickup
+123459,Sarah Wilson,Chemistry,Collected`;
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sample_students.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function downloadSampleExcel() {
+    // For Excel, we'll create a simple CSV that can be opened in Excel
+    // In a real application, you might want to generate an actual .xlsx file
+    const csvContent = `matric_number,name,department,status
+123456,John Doe,Computer Science,Not Yet Printed
+123457,Jane Smith,Mathematics,Printing in Progress
+123458,Mike Johnson,Physics,Ready for Pickup
+123459,Sarah Wilson,Chemistry,Collected`;
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sample_students.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    alert('Downloaded sample CSV file. You can open this in Excel and save as .xlsx format.');
+}
+</script>
+{% endblock %} 

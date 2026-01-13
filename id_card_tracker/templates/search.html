@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Check ID Card Status - LASU{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="text-center mb-5">
+                <h1 class="h2 mb-3">
+                    <i class="bi bi-search text-primary me-2"></i>
+                    Check Your ID Card Status
+                </h1>
+                <p class="text-muted">
+                    Enter your matriculation number to check the current status of your ID card
+                </p>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('search') }}">
+                        <div class="mb-4">
+                            <label for="matric_number" class="form-label fw-semibold">
+                                <i class="bi bi-card-text me-2"></i>
+                                Matriculation Number
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                id="matric_number" 
+                                name="matric_number" 
+                                placeholder="e.g., 123456"
+                                required
+                                autocomplete="off"
+                                pattern="[0-9]{6}"
+                                title="Please enter a 6-digit matric number"
+                                maxlength="6"
+                            >
+                            <div class="form-text">
+                                Format: 6 digits only (e.g., 123456)
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-search me-2"></i>
+                                Check Status
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="mt-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-info-circle text-primary me-2"></i>
+                            How to find your matric number:
+                        </h6>
+                        <ul class="card-text small text-muted mb-0">
+                            <li>Check your admission letter or student handbook</li>
+                            <li>Look at your student ID card (if you have an old one)</li>
+                            <li>Contact your department's administrative office</li>
+                            <li>Check your student portal or MIS account</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Legend -->
+            <div class="mt-4">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-list-check text-primary me-2"></i>
+                            Status Legend:
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <span class="badge bg-secondary me-2">Not Yet Printed</span>
+                                <small class="text-muted">Processing not started</small>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge bg-info me-2">Printing in Progress</span>
+                                <small class="text-muted">Currently being processed</small>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge bg-success me-2">Ready for Pickup</span>
+                                <small class="text-muted">Available at ITEMS office</small>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge bg-primary me-2">Collected</span>
+                                <small class="text-muted">Successfully received</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Validate matric number input -->
+<script>
+document.getElementById('matric_number').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Limit to 6 digits only
+    if (value.length > 6) {
+        value = value.slice(0, 6);
+    }
+    
+    e.target.value = value;
+});
+</script>
+{% endblock %} 
